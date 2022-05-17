@@ -28,6 +28,7 @@ async function run() {
     const serviceCollection = client
       .db("doctors_portal")
       .collection("services");
+    const bookingCollection = client.db("doctors_portal").collection("booking");
 
     app.get("/service", async (req, res) => {
       const query = {};
@@ -35,6 +36,29 @@ async function run() {
       const cursor = serviceCollection.find(query);
       const services = await cursor.toArray();
       res.send(services);
+    });
+
+    app.post("/booking", async (req, res) => {
+      const booking = req.body;
+
+      console.log(booking);
+
+      // const query = {
+      //   treatment: booking.treatmentName,
+      //   patient: booking.patient,
+      // };
+
+      // const exists = await bookingCollection.find(query);
+      // if (exists) {
+      //   return res.send({ success: false, booking: exists });
+      // }
+
+      // console.log(query);
+      // const result = await bookingCollection.insertOne(booking);
+      // return res.send({ success: true, result });
+
+      const result = await bookingCollection.insertOne(booking);
+      res.send(result);
     });
   } finally {
   }
