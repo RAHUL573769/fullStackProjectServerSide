@@ -39,22 +39,36 @@ async function run() {
     });
     app.get("/available", async (req, res) => {
       const date = req.query.date || "May 17, 2022";
-
-      //get all services
+      // console.log(date);
+      //step :1 get all services
       const services = await serviceCollection.find().toArray();
-      // get the bookings of that date
+      // console.log(services);
+      // step 2: get the bookings of that date
+
       const query = {
         date: date,
       };
       const bookings = await bookingCollection.find(query).toArray();
+      // console.log(bookings);
+      // step 3: for each service,kichu ekta korba
 
-      // for each service ,find bookings for that service
       services.forEach((service) => {
+        //step 4:,find bookings for that service
+
         const serviceBookings = bookings.filter(
-          (b) => b.treatment === service.name
+          (book) => book.treatment === service.name
         );
 
-        service.booked = serviceBookings.map((s) => s.slot);
+        //step 5 select slots for service bookings
+
+        const bookedSlots = serviceBookings.map((book) => book.slot);
+        //step 6: Select slots that are not in booked slots
+
+        const available = service.slots.filter(
+          (slot) => !bookedSlots.includes(slot)
+        );
+        console.log(available);
+        service.slot = available;
       });
 
       res.send(services);
@@ -67,7 +81,6 @@ async function run() {
         treatment: booking.treatment,
         patient: booking.patient,
       };
-      console.log(query);
 
       const exists = await bookingCollection.findOne(query);
       if (exists) {
