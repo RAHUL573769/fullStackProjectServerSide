@@ -48,6 +48,7 @@ async function run() {
       const query = {
         date: date,
       };
+      console.log(query);
       const bookings = await bookingCollection.find(query).toArray();
       // console.log(bookings);
       // step 3: for each service,kichu ekta korba
@@ -67,13 +68,20 @@ async function run() {
         const available = service.slots.filter(
           (slot) => !bookedSlots.includes(slot)
         );
-        console.log(available);
-        service.slot = available;
+        // console.log(available);
+        service.slots = available;
       });
-
+      console.log(services);
       res.send(services);
     });
-
+    app.get("/booking", async (req, res) => {
+      const patient = req.query.patient;
+      const query = {
+        patient: patient,
+      };
+      const bookings = await bookingCollection.find(query).toArray();
+      res.send(bookings);
+    });
     app.post("/booking", async (req, res) => {
       const booking = req.body;
 
